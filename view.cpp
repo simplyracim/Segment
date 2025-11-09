@@ -1,0 +1,90 @@
+#include <SFML/Graphics.hpp>
+#include "Point2.h"
+#include "Vector2.h"
+#include "Segment2.h"
+
+// Convert your types to SFML
+static sf::Vector2f toSF(const Point2& p) { return sf::Vector2f(p.Point2_getX(&p), p.Point2_getY(&p)); }
+static sf::Vector2f toSF(const Vector2& v) { return sf::Vector2f(v.Vector2_getX(&v), v.Vector2_getY(&v)); }
+
+// Draw a filled circle at a position
+static void drawPoint(sf::RenderWindow& window, const sf::Vector2f& pos, float radius, sf::Color color) {
+    sf::CircleShape c(radius);
+    c.setFillColor(color);
+    c.setOrigin(sf::Vector2f{radius, radius});  // center the circle (SFML 3)
+    c.setPosition(pos);
+    window.draw(c);
+}
+
+// Draw a line segment from A to B
+static void drawSegment(sf::RenderWindow& window, const sf::Vector2f& A, const sf::Vector2f& B, sf::Color color) {
+    sf::Vertex line[2];
+    line[0].position = A;
+    line[0].color    = color;
+    line[1].position = B;
+    line[1].color    = color;
+
+    window.draw(line, 2, sf::PrimitiveType::Lines);  // SFML 3 enum
+}
+
+void drawScene(const Segment2& s1, const Segment2& s2, const Point2* intersectionOpt) {
+    const unsigned W = 800, H = 600;
+    sf::RenderWindow window(sf::VideoMode({W, H}), "Segments demo");  // SFML 3
+
+    // Simple world-to-screen transform
+    const float scale = 80.0f;
+    const sf::Vector2f center(W/2.f, H/2.f);
+    auto worldToScreen = [&](sf::Vector2f v) {
+        v.x =  v.x * scale + center.x;
+        v.y = -v.y * scale + center.y; // flip Y
+        return v;
+    };
+
+    // Build endpoints from your representation: P, P+dir
+    Point2 P1 = s1.origin, P2 = s2.origin;
+    Vector2 D1 = s1.direction, D2 = s2.direction;
+
+    Point2 Q1 = Point2_add(&P1, &D1);
+    Point2 Q2 = Point2_add(&P2, &D2);
+
+    auto P1s = worldToScreen(toSF(P1));
+    auto Q1s = worldToScreen(toSF(Q1));
+    auto P2s = worldToScreen(toSF(P2));
+    auto Q2s = worldToScreen(toSF(Q2));
+
+    sf::Color colA(80, 180, 255);
+    sf::Color colB(255, 120, 80);
+    sf::Color colPt(30, 220, 120);
+
+    while (window.isOpen()) {
+        while (auto e = window.pollEvent()) {       // SFML 3: optional<Event>
+            if (e->is<sf::Event::Closed>()) {
+                window.close();
+            }
+        }
+
+        window.clear(sf::Color(25, 25, 28));
+
+        // Axes (optional)
+        drawSegment(window, worldToScreen({-5.f, 0.f}), worldToScreen({ 5.f, 0.f}), sf::Color(70,70,70));
+        drawSegment(window, worldToScreen({ 0.f,-4.f}), worldToScreen({ 0.f, 4.f}), sf::Color(70,70,70));
+
+        // Draw segments
+        drawSegment(window, P1s, Q1s, colA);
+        drawSegment(window, P2s, Q2s, colB);
+
+        // Draw endpoints
+        drawPoint(window, P1s, 5.f, colA);
+        drawPoint(window, Q1s, 5.f, colA);
+        drawPoint(window, P2s, 5.f, colB);
+        drawPoint(window, Q2s, 5.f, colB);
+
+        // Intersection (if provided)
+        if (intersectionOpt) {
+            auto Is = worldToScreen(toSF(*intersectionOpt));
+            drawPoint(window, Is, 6.f, colPt);
+        }
+
+        window.display();
+    }
+}
