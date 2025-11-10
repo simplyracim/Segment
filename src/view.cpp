@@ -1,11 +1,11 @@
 #include <SFML/Graphics.hpp>
 #include "Point2.h"
-#include "Vector2.h"
+#include "Vector.h"
 #include "Segment2.h"
 
 // Convert your types to SFML
 static sf::Vector2f toSF(const Point2& p) { return sf::Vector2f(p.Point2_getX(&p), p.Point2_getY(&p)); }
-static sf::Vector2f toSF(const Vector2& v) { return sf::Vector2f(v.Vector2_getX(&v), v.Vector2_getY(&v)); }
+static sf::Vector2f toSF(const Vector& v) { return sf::Vector2f(v.getX(), v.getY()); }
 
 // Draw a filled circle at a position
 static void drawPoint(sf::RenderWindow& window, const sf::Vector2f& pos, float radius, sf::Color color) {
@@ -42,7 +42,7 @@ void drawScene(const Segment2& s1, const Segment2& s2, const Point2* intersectio
 
     // Build endpoints from your representation: P, P+dir
     Point2 P1 = s1.origin, P2 = s2.origin;
-    Vector2 D1 = s1.direction, D2 = s2.direction;
+    Vector D1 = s1.direction, D2 = s2.direction;
 
     Point2 Q1 = Point2_add(&P1, &D1);
     Point2 Q2 = Point2_add(&P2, &D2);
