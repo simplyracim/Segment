@@ -2,9 +2,9 @@
 #define POINTSEGMENT2_H
 
 #include "Vector.h"
-#include "Point2.h"
+#include "Point.h"
 
-Point2 Point2_add(const Point2 *p, const Vector *r);
-Vector Point2_sub(Point2 *r, const Point2 *p);
+Point Point2_add(const Point *p, const Vector *r);
+Vector Point2_sub(Point *r, const Point *p);
 
 #endif

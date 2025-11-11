@@ -1,7 +1,7 @@
 #ifndef SEGMENT2_H
 #define SEGMENT2_H
 
-#include "Point2.h"
+#include "Point.h"
 #include "Vector.h"
 
 #include "PointSegment2.h"
@@ -19,14 +19,14 @@ typedef enum {
 class Segment2 {
 
     public:
-        Point2 origin;
+        Point origin;
         Vector direction;
 
-        void Segment2_init(Segment2 *s, Point2 origin, Vector direction);
-        Point2 Segment2_getOrigin(const Segment2 *s);
+        void Segment2_init(Segment2 *s, Point origin, Vector direction);
+        Point Segment2_getOrigin(const Segment2 *s);
         Vector Segment2_getDirection(const Segment2 *s);
-        float Segment2_length(const Segment2 *s);
-        IntersectionStatus Segment2_intersect(const Segment2 *s, const Segment2 *r, Point2 *p);
+        float Segment2_length();
+        IntersectionStatus Segment2_intersect(const Segment2 *s, const Segment2 *r, Point p);
         void Segment2_print(Segment2 *s);
 
 };

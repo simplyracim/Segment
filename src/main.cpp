@@ -1,83 +1,81 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "Point2.h"
+#include "Point.h"
 #include "Vector.h"
 #include "Segment2.h"
 
-void drawScene(const Segment2& s1, const Segment2& s2, const Point2* intersectionOpt);
+void drawScene(const Segment2& s1, const Segment2& s2, const Point* intersectionOpt);
 
 #ifdef DEMONSTRATION
 
 // Expected status: PARALLEL_NON_INTERSECTING
-p1.Point2_init_with_xy(&p1, 0., 0.);
-p2.Point2_init_with_xy(&p2, 1., 2.);
+p1.Point(0., 0.);
+p2.Point(1., 2.);
 v1.Vector(1., 1.);
 v2.Vector(2., 4.);
 
 // Expected status: COLINEAR_INTERSECTING
-p1.Point2_init_with_xy(&p1, 0., 0.);
-p2.Point2_init_with_xy(&p2, 1., 0.);
+p1.Point(0., 0.);
+p2.Point(1., 0.);
 v1.Vector(2., 0.);
 v2.Vector(2., 0.);
 
 // Expected intersection point: (1,0)
 // Expected status: POINT
-p1.Point2_init_with_xy(&p1, 0., 0.);
-p2.Point2_init_with_xy(&p2, 1., -1.);
+p1.Point(0., 0.);
+p2.Point(1., -1.);
 v1.Vector(2., 0.);
 v2.Vector(0., 3.);
 
 // Expected status: PARALLEL_NON_INTERSECTING
-p1.Point2_init_with_xy(&p1, 0., 0.);
-p2.Point2_init_with_xy(&p2, 1., 2.);
+p1.Point(0., 0.);
+p2.Point(1., 2.);
 v1.Vector(1., 1.);
 v2.Vector(2., 4.);
 
 // Expected status: COLINEAR_INTERSECTING
-p1.Point2_init_with_xy(&p1, 0., 0.);
-p2.Point2_init_with_xy(&p2, 1., 0.);
+p1.Point(0., 0.);
+p2.Point(1., 0.);
 v1.Vector(2., 0.);
 v2.Vector(2., 0.);
 
 // Expected status: COLINEAR_NON_INTERSECTING
-p1.Point2_init_with_xy(&p1, 0., 0.);
-p2.Point2_init_with_xy(&p2, 2., 0.);
+p1.Point(0., 0.);
+p2.Point(2., 0.);
 v1.Vector(1., 0.);
 v2.Vector(0., 1.);
 
 // Expected status: NON_INTERSECTING
-p1.Point2_init_with_xy(&p1, 0., 0.);
-p2.Point2_init_with_xy(&p2, 2., 2.);
+p1.Point(0., 0.);
+p2.Point(2., 2.);
 v1.Vector(1., 0.);
 v2.Vector(-1., 1.);
 
 
-p1.Point2_init_with_xy(&p1, 0., 0.);
-p2.Point2_init_with_xy(&p2, 2., 0.);
+p1.Point(0., 0.);
+p2.Point(2., 0.);
 v1.Vector(1., 0.);
 v2.Vector(1., 0.);
 
 #endif
 
 int main() {
-    Point2 p1, p2, intersection;
-// old declarations    Vector v1, v2;
+    Point intersection;
     Segment2 s1, s2;
     
-    // Insert Demo values here
-// Expected status: COLINEAR_NON_INTERSECTING
-p1.Point2_init_with_xy(&p1, 0., 0.);
-p2.Point2_init_with_xy(&p2, 2., 0.);
-Vector v1(1., 0.);
-Vector v2(0., 1.);
+    // Insert Demo values here :
+    Point p1(0., 0.);
+    Point p2(2., 0.);
+    Vector v1(1., 0.);
+    Vector v2(0., 1.);
 
     s1.Segment2_init(&s1, p1, v1);
     s2.Segment2_init(&s2, p2, v2);
 
     std::cout << "Points 1 and 2 : \n";
-    p2.Point2_print(&p2);
-    p1.Point2_print(&p1);
+    p2.print();
+    p1.print();
 
     std::cout << "=====\n";
 
@@ -93,20 +91,17 @@ Vector v2(0., 1.);
 
     std::cout << "=====\n";
 
-    IntersectionStatus status = s1.Segment2_intersect(&s1, &s2, &intersection);
+    IntersectionStatus status = s1.Segment2_intersect(&s1, &s2, intersection);
 
     std::cout << "\nIntersection status: "
               << Segment2_statusToString(status) << "\n";
 
     if (status == POINT) {
         std::cout << "Intersection point: ";
-        intersection.Point2_print(&intersection);
+        intersection.print();
     }
 
     // Show the window with a point marker only when status == POINT
     drawScene(s1, s2, (status == POINT ? &intersection : nullptr));
-
-
-
-  return 0;
+    return 0;
 }

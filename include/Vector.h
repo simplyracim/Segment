@@ -5,30 +5,26 @@
 #include <iostream>
 
 class Vector {
-private:
+private :
     float x, y;
 
-public:
+public :
     // Constructors
     Vector();
     Vector(float x, float y);
 
     // Accessors
-    float getX() const;
-    float getY() const;
+    float getX();
+    float getY();
 
     // Operations
-    float norm() const;
+    float length();
+    float dot(Vector r);
+    float cross(Vector r);
+    Vector dot_scalar(float u);
+    Vector negate();
 
-    float dot(const Vector& r) const;
-
-    Vector dot_scalar(float u) const;
-
-    float cross(const Vector& r) const;
-
-    Vector negate() const;
-
-    void print() const;
+    void print();
 };
 
 #endif // VECTOR_H

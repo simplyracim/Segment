@@ -9,32 +9,32 @@ Vector::Vector() : x(0.f), y(0.f) {}
 Vector::Vector(float new_x, float new_y) : x(new_x), y(new_y) {}
 
 // getters
-float Vector::getX() const { return x; }
-float Vector::getY() const { return y; }
+float Vector::getX() { return x; }
+float Vector::getY() { return y; }
 
 // operations
-float Vector::norm() const {
+float Vector::length() {
     return std::sqrt(x * x + y * y);
 }
 
-float Vector::dot(const Vector& r) const {
+float Vector::dot(Vector r) {
     // allowed to access r.x / r.y because we're inside Vector's member function
     return x * r.x + y * r.y;
 }
 
-Vector Vector::dot_scalar(float u) const {
-    return Vector(x * u, y * u);
-}
-
-float Vector::cross(const Vector& r) const {
+float Vector::cross(Vector r) {
     // 2D "cross" returns a scalar (z-component of the 3D cross product)
     return x * r.y - y * r.x;
 }
 
-Vector Vector::negate() const {
+Vector Vector::dot_scalar(float u) {
+    return Vector(x * u, y * u);
+}
+
+Vector Vector::negate() {
     return Vector(-x, -y);
 }
 
-void Vector::print() const {
+void Vector::print() {
     std::cout << "Vector(" << x << ", " << y << ")\n";
 }

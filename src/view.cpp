@@ -1,11 +1,11 @@
 #include <SFML/Graphics.hpp>
-#include "Point2.h"
+#include "Point.h"
 #include "Vector.h"
 #include "Segment2.h"
 
 // Convert your types to SFML
-static sf::Vector2f toSF(const Point2& p) { return sf::Vector2f(p.Point2_getX(&p), p.Point2_getY(&p)); }
-static sf::Vector2f toSF(const Vector& v) { return sf::Vector2f(v.getX(), v.getY()); }
+static sf::Vector2f toSF(Point p) { return sf::Vector2f(p.getX(), p.getY()); }
+static sf::Vector2f toSF(Vector v) { return sf::Vector2f(v.getX(), v.getY()); }
 
 // Draw a filled circle at a position
 static void drawPoint(sf::RenderWindow& window, const sf::Vector2f& pos, float radius, sf::Color color) {
@@ -27,7 +27,7 @@ static void drawSegment(sf::RenderWindow& window, const sf::Vector2f& A, const s
     window.draw(line, 2, sf::PrimitiveType::Lines);  // SFML 3 enum
 }
 
-void drawScene(const Segment2& s1, const Segment2& s2, const Point2* intersectionOpt) {
+void drawScene(const Segment2& s1, const Segment2& s2, const Point* intersectionOpt) {
     const unsigned W = 800, H = 600;
     sf::RenderWindow window(sf::VideoMode({W, H}), "Segments demo");  // SFML 3
 
@@ -41,11 +41,11 @@ void drawScene(const Segment2& s1, const Segment2& s2, const Point2* intersectio
     };
 
     // Build endpoints from your representation: P, P+dir
-    Point2 P1 = s1.origin, P2 = s2.origin;
+    Point P1 = s1.origin, P2 = s2.origin;
     Vector D1 = s1.direction, D2 = s2.direction;
 
-    Point2 Q1 = Point2_add(&P1, &D1);
-    Point2 Q2 = Point2_add(&P2, &D2);
+    Point Q1 = translate(P1, D1);
+    Point Q2 = translate(P2, D2);
 
     auto P1s = worldToScreen(toSF(P1));
     auto Q1s = worldToScreen(toSF(Q1));

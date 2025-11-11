@@ -11,12 +11,12 @@ const char* Segment2_statusToString(IntersectionStatus status) {
     }
 }
 
-void Segment2::Segment2_init(Segment2 *s, Point2 origin, Vector direction) {
+void Segment2::Segment2_init(Segment2 *s, Point origin, Vector direction) {
     s->origin = origin;
     s->direction = direction;
 }
 
-Point2 Segment2::Segment2_getOrigin(const Segment2 *s) {
+Point Segment2::Segment2_getOrigin(const Segment2 *s) {
     return s->origin;
 }
 
@@ -24,15 +24,14 @@ Vector Segment2::Segment2_getDirection(const Segment2 *s) {
     return s->direction;
 }
 
-float Segment2::Segment2_length(const Segment2 *s) {
-    // return direction.Vector_norm(&s->direction);
-    return s->direction.norm(); // CHANGED: use Vector::norm()
+float Segment2::Segment2_length() {
+    return direction.length();
 }
 
-IntersectionStatus Segment2::Segment2_intersect(const Segment2 *s, const Segment2 *r, Point2 *p) {
-    Point2 oa = Segment2_getOrigin(s), ob = Segment2_getOrigin(r);
+IntersectionStatus Segment2::Segment2_intersect(const Segment2 *s, const Segment2 *r, Point p) {
+    Point oa = Segment2_getOrigin(s), ob = Segment2_getOrigin(r);
     Vector da = Segment2_getDirection(s), db = Segment2_getDirection(r);
-    Vector dc = Point2_sub(&ob, &oa);
+    Vector dc = vector_from_points(ob, oa);
 
     IntersectionStatus status;
     // float det = direction.Vector_cross(&da, &db);
@@ -49,7 +48,7 @@ IntersectionStatus Segment2::Segment2_intersect(const Segment2 *s, const Segment
         if ((u >= 0.0 && u <= 1.0) && (v >= 0.0 && v <= 1.0)) {
             // Vector tmp = direction.Vector_dot_scalar(&da, u);
             Vector tmp = da.dot_scalar(u); // CHANGED: use Vector::dot_scalar()
-            *p = Point2_add(&oa, &tmp);
+            Point p = translate(oa, tmp);
             status = POINT;
         } else {
             status = NON_INTERSECTING;
@@ -69,11 +68,11 @@ IntersectionStatus Segment2::Segment2_intersect(const Segment2 *s, const Segment
             d2 = d1 + db.dot(da) / pj;    // CHANGED
 
             if (d1 >= 0.0 && d1 <= 1.0) {
-                *p = ob;
+                p = ob;
                 status = COLINEAR_INTERSECTING;
             } else if (d2 >= 0.0 && d2 <= 1.0) {
-                Point2 tmp_ob_db = Point2_add(&ob, &db);
-                *p = tmp_ob_db;
+                Point tmp_ob_db = translate(ob, db);
+                p = tmp_ob_db;
                 status = COLINEAR_INTERSECTING;
             } else {
                 status = COLINEAR_NON_INTERSECTING;
@@ -89,10 +88,10 @@ IntersectionStatus Segment2::Segment2_intersect(const Segment2 *s, const Segment
 void Segment2::Segment2_print(Segment2 *s) {
     std::cout << "Segment:\n";
     std::cout << "  Origin: ";
-    s->origin.Point2_print(&s->origin);
+    s->origin.print();
     std::cout << "  Direction: ";
     // s->direction.Vector_print(&s->direction);
     s->direction.print(); // CHANGED: use Vector::print()
     // std::cout << "  Length: " << s->direction.Vector_norm(&s->direction) << "\n\n";
-    std::cout << "  Length: " << s->direction.norm() << "\n\n"; // CHANGED: use Vector::norm()
+    std::cout << "  Length: " << s->direction.length() << "\n\n"; // CHANGED: use Vector::norm()
 }

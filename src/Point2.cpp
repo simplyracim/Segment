@@ -1,49 +1,48 @@
-#include "Point2.h"
+#include "Point.h"
 
-// constructors
-void Point2::Point2_init(Point2 *p) {
-    p->x = 0;
-    p->y = 0;
-}
-
-void Point2::Point2_init_with_xy(Point2 *p, float x, float y) {
-    p->x = x;
-    p->y = y;
-}
+// contructeurs
+Point::Point() : x(0.f), y(0.f) {}
+Point::Point(float new_x, float new_y) : x(new_x), y(new_y) {}
 
 // getters
-float Point2::Point2_getX(const Point2 *p) const {
-    return p->x;
+float Point::getX() {
+    return x;
 }
 
-float Point2::Point2_getY(const Point2 *p) const {
-    return p->y;
+float Point::getY() {
+    return y;
 }
 
 // setters
-void Point2::Point2_setX(Point2 *p, float x) {
-    p->x = x;
+void Point::setX(float new_x) {
+    x = new_x;
 }
 
-void Point2::Point2_setY(Point2 *p, float y) {
-    p->y = y;
+void Point::setY(float new_y) {
+    y = new_y;
 }
 
 // print
-void Point2::Point2_print(const Point2 *p) const {
-    std::cout << "{" << p->x << " , " << p->y << "}\n";
+void Point::print() {
+    std::cout << "{" << x << " , " << y << "}\n";
 }
 
-Vector Point2_sub(Point2* r, const Point2* p) {
-    const float dx = r->Point2_getX(r) - p->Point2_getX(p);
-    const float dy = r->Point2_getY(r) - p->Point2_getY(p);
+
+// Create a vector from two points
+Vector vector_from_points(Point r, Point p) {
+
+    float dx = r.getX() - p.getX();
+    float dy = r.getY() - p.getY();
+
     return Vector(dx, dy);
 }
 
-Point2 Point2_add(const Point2* p, const Vector* v) {
-    Point2 result;
-    const float x = p->Point2_getX(p) + v->getX();
-    const float y = p->Point2_getY(p) + v->getY();
-    result.Point2_init_with_xy(&result, x, y);
-    return result;
+// add a point at origin.x + vector.x ; origin.y + vector.y
+Point translate(Point p, Vector v) {
+
+    Point result;
+    float x = p.getX() + v.getX();
+    float y = p.getY() + v.getY();
+
+    return Point(x, y);
 }

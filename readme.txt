@@ -15,15 +15,16 @@ Understand Makefiles
 
 Need to delete the whole obj folder to compile
 
-Rename Point2 to Point (I'd like to discover to do this clean, because I struggles with Vector2 to Vector)
-
 Fix the graphics :
 	- Gradations of the axioms
-	- Representation for operations (Scalar, dot, cross)
+	- Representation for operations (Scalar, dot, cross, negate)
+	- Later fuse the terminal to the graphics (one shared window)
 
-Understand the code
-
-Later fuse the terminal to the graphics (one shared window)
+(X) Understand the code
+--> Renamed sub() and add() to vector_from_points() and translate() for clarity
 
 Replace C style function to C++ methods (eg: vector_getX(&vector) to getX())
---> Done for Vectors, still need to do Points and Segments
+--> Done for Vectors and points, still need to do Segments
+
+(X) Rename Point2 to Point (I'd like to discover to do this clean, because I struggles with Vector2 to Vector)
+--> right-click / rename symbol. it's as easy as that.
