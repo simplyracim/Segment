@@ -3,9 +3,9 @@
 
 #include "Point.h"
 #include "Vector.h"
-#include "Segment2.h"
+#include "Segment.h"
 
-void drawScene(const Segment2& s1, const Segment2& s2, const Point* intersectionOpt);
+void drawScene(const Segment& s1, const Segment& s2, const Point* intersectionOpt);
 
 #ifdef DEMONSTRATION
 
@@ -61,8 +61,6 @@ v2.Vector(1., 0.);
 #endif
 
 int main() {
-    Point intersection;
-    Segment2 s1, s2;
     
     // Insert Demo values here :
     Point p1(0., 0.);
@@ -70,8 +68,10 @@ int main() {
     Vector v1(1., 0.);
     Vector v2(0., 1.);
 
-    s1.Segment2_init(&s1, p1, v1);
-    s2.Segment2_init(&s2, p2, v2);
+    Segment s1(p1, v1);
+    Segment s2(p2, v2);
+
+    Point intersection;
 
     std::cout << "Points 1 and 2 : \n";
     p2.print();
@@ -86,12 +86,12 @@ int main() {
     std::cout << "=====\n";
 
     std::cout << "Segments 1 and 2 : \n";
-    s1.Segment2_print(&s1);
-    s2.Segment2_print(&s2);
+    s1.print();
+    s2.print();
 
     std::cout << "=====\n";
 
-    IntersectionStatus status = s1.Segment2_intersect(&s1, &s2, intersection);
+    IntersectionStatus status = s1.intersect(s1, s2, intersection);
 
     std::cout << "\nIntersection status: "
               << Segment2_statusToString(status) << "\n";

@@ -1,7 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include "Point.h"
 #include "Vector.h"
-#include "Segment2.h"
+#include "Segment.h"
 
 // Convert your types to SFML
 static sf::Vector2f toSF(Point p) { return sf::Vector2f(p.getX(), p.getY()); }
@@ -27,9 +27,9 @@ static void drawSegment(sf::RenderWindow& window, const sf::Vector2f& A, const s
     window.draw(line, 2, sf::PrimitiveType::Lines);  // SFML 3 enum
 }
 
-void drawScene(const Segment2& s1, const Segment2& s2, const Point* intersectionOpt) {
+void drawScene(const Segment& s1, const Segment& s2, const Point* intersectionOpt) {
     const unsigned W = 800, H = 600;
-    sf::RenderWindow window(sf::VideoMode({W, H}), "Segments demo");  // SFML 3
+    sf::RenderWindow window(sf::VideoMode({W, H}), "Segment demo");  // SFML 3
 
     // Simple world-to-screen transform
     const float scale = 80.0f;

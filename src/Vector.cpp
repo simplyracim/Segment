@@ -19,12 +19,12 @@ float Vector::length() {
 
 float Vector::dot(Vector r) {
     // allowed to access r.x / r.y because we're inside Vector's member function
-    return x * r.x + y * r.y;
+    return this->x * r.x + this->y * r.y;
 }
 
 float Vector::cross(Vector r) {
     // 2D "cross" returns a scalar (z-component of the 3D cross product)
-    return x * r.y - y * r.x;
+    return this->x * r.y - this->y * r.x;
 }
 
 Vector Vector::dot_scalar(float u) {

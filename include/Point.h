@@ -1,7 +1,7 @@
-#ifndef POINT2_H
-#define POINT2_H
+#ifndef POINT_H
+#define POINT_H
 
-#include "Vector.h" // for point2_sub, point2_add
+#include "Vector.h" // for vector_from_points(), translate()
 #include <iostream>
 
 class Point {
@@ -28,4 +28,4 @@ public:
 Vector vector_from_points(Point r, Point p);     // r - p
 Point translate(Point p, Vector v);     // p + v
 
-#endif // POINT2_H
+#endif // POINT_H
