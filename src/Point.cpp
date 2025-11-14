@@ -23,26 +23,6 @@ void Point::setY(float new_y) {
 }
 
 // print
-void Point::print() {
+void Point::print() const {
     std::cout << "{" << x << " , " << y << "}\n";
-}
-
-
-// Create a vector from two points
-Vector vector_from_points(Point r, Point p) {
-
-    float dx = r.getX() - p.getX();
-    float dy = r.getY() - p.getY();
-
-    return Vector(dx, dy);
-}
-
-// add a point at origin.x + vector.x ; origin.y + vector.y
-Point translate(Point p, Vector v) {
-
-    Point result;
-    float x = p.getX() + v.getX();
-    float y = p.getY() + v.getY();
-
-    return Point(x, y);
 }

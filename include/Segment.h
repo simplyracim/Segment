@@ -4,8 +4,6 @@
 #include "Point.h"
 #include "Vector.h"
 
-
-
 typedef enum {
     POINT,
     COLINEAR_INTERSECTING,
@@ -26,13 +24,13 @@ class Segment {
         Segment(Point origin, Vector direction);
 
         // getters
-        Point getOrigin();
-        Vector getDirection();
+        Point getOrigin() const;
+        Vector getDirection() const;
 
         // operations
-        float length();
-        IntersectionStatus intersect(Segment s, Segment r, Point p);
-        void print();
+        float length() const;
+        IntersectionStatus intersect(const Segment& other, Point& p) const;
+        void print() const;
 
 };
 

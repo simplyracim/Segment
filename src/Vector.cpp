@@ -13,21 +13,21 @@ float Vector::getX() { return x; }
 float Vector::getY() { return y; }
 
 // operations
-float Vector::length() {
+float Vector::length() const {
     return std::sqrt(x * x + y * y);
 }
 
-float Vector::dot(Vector r) {
+float Vector::dot(Vector r) const {
     // allowed to access r.x / r.y because we're inside Vector's member function
     return this->x * r.x + this->y * r.y;
 }
 
-float Vector::cross(Vector r) {
-    // 2D "cross" returns a scalar (z-component of the 3D cross product)
+// determinant
+float Vector::cross(Vector r) const {
     return this->x * r.y - this->y * r.x;
 }
 
-Vector Vector::dot_scalar(float u) {
+Vector Vector::dot_scalar(float u) const {
     return Vector(x * u, y * u);
 }
 
@@ -35,6 +35,25 @@ Vector Vector::negate() {
     return Vector(-x, -y);
 }
 
-void Vector::print() {
+void Vector::print() const {
     std::cout << "Vector(" << x << ", " << y << ")\n";
+}
+
+// Create a vector from two points
+Vector vector_from_points(Point a, Point b) {
+
+    float dx = a.getX() - b.getX();
+    float dy = a.getY() - b.getY();
+
+    return Vector(dx, dy);
+}
+
+// add a point at origin.x + vector.x ; origin.y + vector.y
+Point translate(Point p, Vector v) {
+
+    Point result;
+    float x = p.getX() + v.getX();
+    float y = p.getY() + v.getY();
+
+    return Point(x, y);
 }

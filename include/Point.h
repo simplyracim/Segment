@@ -1,7 +1,6 @@
 #ifndef POINT_H
 #define POINT_H
 
-#include "Vector.h" // for vector_from_points(), translate()
 #include <iostream>
 
 class Point {
@@ -22,10 +21,7 @@ public:
     void setY(float new_y);
 
     // print
-    void print();
+    void print() const;
 };
-
-Vector vector_from_points(Point r, Point p);     // r - p
-Point translate(Point p, Vector v);     // p + v
 
 #endif // POINT_H

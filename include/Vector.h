@@ -1,6 +1,8 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
+#include "Point.h"
+
 #include <cmath>
 #include <iostream>
 
@@ -18,13 +20,16 @@ public :
     float getY();
 
     // Operations
-    float length();
-    float dot(Vector r);
-    float cross(Vector r);
-    Vector dot_scalar(float u);
+    float length() const;
+    float dot(Vector r) const;
+    float cross(Vector r) const;
+    Vector dot_scalar(float u) const;
     Vector negate();
 
-    void print();
+    void print() const;
 };
+
+Vector vector_from_points(Point a, Point b);
+Point translate(Point p, Vector v);
 
 #endif // VECTOR_H

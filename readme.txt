@@ -5,6 +5,8 @@ This project was made as a learning exercise for C++, especially on the function
 
 Things to do :
 
+Introduce a Segment manager for creating and deleting as many segments as I want, using a std::vector instead of a pointer array
+
 (X) Errors squiggles but code compiles and runs fine
 --> Wrong C++ standard defined in settings.json (98 instead of 20)
 
