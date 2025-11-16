@@ -24,5 +24,5 @@ void Point::setY(float new_y) {
 
 // print
 void Point::print() const {
-    std::cout << "{" << x << " , " << y << "}\n";
+    std::cout << "{" << x << " , " << y << "}";
 }

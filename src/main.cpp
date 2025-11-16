@@ -32,7 +32,7 @@ int main() {
     // Compute intersections
     std::vector<Point> intersections;
 
-    for (std::size_t i = 0; i < segments.size(); ++i) {
+    for (std::size_t i = 0; i < segments.size() - 1; ++i) {
         for (std::size_t j = i + 1; j < segments.size(); ++j) {
 
             Point intersection;
@@ -40,14 +40,17 @@ int main() {
                 segments[i].intersect(segments[j], intersection);
 
             std::cout << "Segments " << i << " and " << j
-                      << " -> " << Segment2_statusToString(status) << "\n";
+                      << " -> " << Segment2_statusToString(status);
 
             if (status == POINT) {
-                std::cout << "  Intersection point: ";
                 intersection.print();
                 intersections.push_back(intersection);
             }
+
+            std::cout << "\n";
         }
+
+        std::cout << "=============\n";
     }
 
     // Launch the view

@@ -5,6 +5,8 @@
 
 #include <random>
 
+
+
 // ======= Small free helpers (file-local) =======
 
 static sf::Vector2f toSF(const Point& p)  { return { p.getX(), p.getY() }; }
@@ -52,7 +54,7 @@ View::View(const std::vector<Segment>& segments,
 
     // Random color generator (stable per View instance)
     std::mt19937 rng(std::random_device{}());
-    std::uniform_int_distribution<int> dist(0, 30);
+    std::uniform_int_distribution<int> dist(0, 255);
 
     m_segColors.reserve(m_segments.size());
     for (std::size_t i = 0; i < m_segments.size(); ++i) {
@@ -66,7 +68,6 @@ View::View(const std::vector<Segment>& segments,
     }
 }
 
-
 sf::Vector2f View::worldToScreen(sf::Vector2f v) const
 {
     v.x =  v.x * m_scale + m_center.x;
@@ -76,32 +77,75 @@ sf::Vector2f View::worldToScreen(sf::Vector2f v) const
 
 void View::handleEvents()
 {
-    while (auto e = m_window.pollEvent()) {  // SFML 3 optional<Event>
+    while (auto e = m_window.pollEvent()) {
         if (e->is<sf::Event::Closed>()) {
             m_window.close();
+        }
+
+        if (auto* r = e->getIf<sf::Event::Resized>()) {
+            onResize(r->size.x, r->size.y);
         }
     }
 }
 
+void View::onResize(unsigned newW, unsigned newH)
+{
+    // Recenter view — scaling stays the same.
+    m_center = { newW / 2.f, newH / 2.f };
+
+    // Update the SFML internal view to match new window size
+    sf::View view = m_window.getView();
+    view.setSize({ (float) newW, (float) newH });
+    view.setCenter(m_center);
+    m_window.setView(view);
+}
+
 void View::drawAxes()
 {
-    drawSegment(m_window,
-                worldToScreen({-5.f, 0.f}),
-                worldToScreen({ 5.f, 0.f}),
-                sf::Color(70,70,70));
+    // ----- Grid (sub-axes) -----
+    const int gridMax = 10;
+    sf::Color gridColor(40, 40, 40);
 
+    // vertical
+    for (int x = -gridMax; x <= gridMax; ++x) {
+        if (x == 0) continue;
+
+        sf::Vector2f a = worldToScreen({ static_cast<float>(x), -static_cast<float>(gridMax) });
+        sf::Vector2f b = worldToScreen({ static_cast<float>(x),  static_cast<float>(gridMax)  });
+        drawSegment(m_window, a, b, gridColor);
+    }
+
+    // horizontal
+    for (int y = -gridMax; y <= gridMax; ++y) {
+        if (y == 0) continue;
+
+        sf::Vector2f a = worldToScreen({ -static_cast<float>(gridMax), static_cast<float>(y) });
+        sf::Vector2f b = worldToScreen({  static_cast<float>(gridMax), static_cast<float>(y) });
+        drawSegment(m_window, a, b, gridColor);
+    }
+
+    // ----- Main axes (X and Y) -----
+    sf::Color axisColor(70, 70, 70);
+
+    // X axis
     drawSegment(m_window,
-                worldToScreen({ 0.f,-4.f}),
-                worldToScreen({ 0.f, 4.f}),
-                sf::Color(70,70,70));
+                worldToScreen({ -50.f, 0.f }),
+                worldToScreen({  50.f, 0.f }),
+                axisColor);
+
+    // Y axis
+    drawSegment(m_window,
+                worldToScreen({ 0.f, -50.f }),
+                worldToScreen({ 0.f,  50.f }),
+                axisColor);
 }
 
 void View::drawAxisLabels()
 {
     if (!m_fontLoaded) return;
 
-    const int maxX = 5;
-    const int maxY = 4;
+    const int maxX = 10;
+    const int maxY = 10;
 
     // ---------- X-axis labels ----------
     for (int x = -maxX; x <= maxX; ++x) {
@@ -184,7 +228,6 @@ void View::drawIntersections()
         m_window.draw(c);
     }
 }
-
 
 void View::run()
 {

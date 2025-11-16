@@ -3,7 +3,7 @@
 
 const char* Segment2_statusToString(IntersectionStatus status) {
     switch (status) {
-        case POINT:                     return "POINT (Segments intersect at one point)";
+        case POINT:                     return "POINT : ";
         case COLINEAR_INTERSECTING:     return "COLINEAR_INTERSECTING (Overlapping)";
         case COLINEAR_NON_INTERSECTING: return "COLINEAR_NON_INTERSECTING (Same line but disjoint)";
         case PARALLEL_NON_INTERSECTING: return "PARALLEL_NON_INTERSECTING";
