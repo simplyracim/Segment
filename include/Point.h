@@ -13,8 +13,8 @@ public:
     Point(float new_x, float new_y);
 
     // getters
-    float getX();
-    float getY();
+    float getX() const;
+    float getY() const;
 
     // setters
     void setX(float new_x);

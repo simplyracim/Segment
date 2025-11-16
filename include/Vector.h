@@ -16,8 +16,8 @@ public :
     Vector(float x, float y);
 
     // Accessors
-    float getX();
-    float getY();
+    float getX() const;
+    float getY() const;
 
     // Operations
     float length() const;

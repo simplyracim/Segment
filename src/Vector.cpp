@@ -9,8 +9,8 @@ Vector::Vector() : x(0.f), y(0.f) {}
 Vector::Vector(float new_x, float new_y) : x(new_x), y(new_y) {}
 
 // getters
-float Vector::getX() { return x; }
-float Vector::getY() { return y; }
+float Vector::getX() const { return x; }
+float Vector::getY() const { return y; }
 
 // operations
 float Vector::length() const {
