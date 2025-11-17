@@ -34,12 +34,12 @@ private:
     sf::Vector2f worldToScreen(sf::Vector2f v) const;
 
     void handleEvents();
-    void onResize(unsigned newWidth, unsigned newHeight);
+    void handleResize(unsigned newWidth, unsigned newHeight);
+    void handleMouseWheel(const sf::Event::MouseWheelScrolled& wheel);
     void drawAxes();
     void drawSegments();
     void drawIntersections();
     void drawAxisLabels();
-    
 };
 
 #endif // VIEW_H

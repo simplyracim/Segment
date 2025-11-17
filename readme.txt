@@ -13,9 +13,11 @@ Representation for operations (Scalar, dot, cross, negate)
 
 Later fuse the terminal to the graphics (one shared window)
 
-Resizing
+Hide the Axes the farther you go
 
-Controls (zoom, pan ect)
+(X) Resizing
+
+(X) Controls (zoom, pan ect)
 
 Logic ===============================================
 

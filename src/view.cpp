@@ -1,6 +1,4 @@
 #include "View.h"
-#include "Point.h"
-#include "Vector.h"
 #include "Segment.h"
 
 #include <random>
@@ -71,24 +69,11 @@ View::View(const std::vector<Segment>& segments,
 sf::Vector2f View::worldToScreen(sf::Vector2f v) const
 {
     v.x =  v.x * m_scale + m_center.x;
-    v.y = -v.y * m_scale + m_center.y; // flip Y
+    v.y = -v.y * m_scale + m_center.y;
     return v;
 }
 
-void View::handleEvents()
-{
-    while (auto e = m_window.pollEvent()) {
-        if (e->is<sf::Event::Closed>()) {
-            m_window.close();
-        }
-
-        if (auto* r = e->getIf<sf::Event::Resized>()) {
-            onResize(r->size.x, r->size.y);
-        }
-    }
-}
-
-void View::onResize(unsigned newW, unsigned newH)
+void View::handleResize(unsigned newW, unsigned newH)
 {
     // Recenter view — scaling stays the same.
     m_center = { newW / 2.f, newH / 2.f };
@@ -98,6 +83,88 @@ void View::onResize(unsigned newW, unsigned newH)
     view.setSize({ (float) newW, (float) newH });
     view.setCenter(m_center);
     m_window.setView(view);
+}
+
+void View::handleEvents()
+{
+    while (auto e = m_window.pollEvent()) {
+        if (e->is<sf::Event::Closed>()) {
+            m_window.close();
+        }
+
+        // Handle resize: keep fixed world scale, just recenter
+        if (auto* r = e->getIf<sf::Event::Resized>()) {
+            m_center = { r->size.x / 2.f, r->size.y / 2.f };
+
+            sf::View view = m_window.getView();
+            view.setSize({ static_cast<float>(r->size.x),
+                           static_cast<float>(r->size.y) });
+            view.setCenter(m_center);
+            m_window.setView(view);
+        }
+
+        // Mouse wheel: zoom / pan
+        if (auto* mw = e->getIf<sf::Event::MouseWheelScrolled>()) {
+            handleMouseWheel(*mw);
+        }
+    }
+}
+
+void View::handleMouseWheel(const sf::Event::MouseWheelScrolled& wheel)
+{
+    // Modifier keys
+    bool ctrl  = sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::LControl) ||
+                 sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::RControl);
+    bool shift = sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::LShift) ||
+                 sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::RShift);
+
+    float delta = wheel.delta;          // >0 = scroll up, <0 = scroll down
+
+    const float panSpeed  = 30.f;       // pixels per wheel tick
+    const float zoomStep  = 1.3f;       // zoom factor per tick
+
+    if (ctrl) {
+        // ========= ZOOM (Ctrl + scroll) =========
+        float factor = (delta > 0.f) ? zoomStep : (1.f / zoomStep);
+
+        float oldScale = m_scale;
+        float newScale = oldScale * factor;
+
+        // Clamp zoom
+        const float minScale = 10.f;
+        const float maxScale = 400.f;
+        if (newScale < minScale) newScale = minScale;
+        if (newScale > maxScale) newScale = maxScale;
+
+        if (newScale == oldScale)
+            return; // nothing to do (hit clamp)
+
+        // Screen position of mouse (in pixels, relative to window)
+        sf::Vector2f S{
+            static_cast<float>(wheel.position.x),
+            static_cast<float>(wheel.position.y)
+        };
+
+        // Adjust center so the world point under the mouse stays fixed
+        float k = newScale / oldScale;
+
+        // c' = S * (1 - k) + c * k
+        m_center = {
+            S.x * (1.f - k) + m_center.x * k,
+            S.y * (1.f - k) + m_center.y * k
+        };
+
+        m_scale = newScale;
+    } else {
+        // ========= PANNING =========
+        float amount = panSpeed * delta;
+
+        if (shift) {
+            m_center.x += amount; // Horizontal pan (Shift + scroll)
+        } else {
+            m_center.y += amount; // Vertical pan (plain scroll)
+        }
+    }
 }
 
 void View::drawAxes()
