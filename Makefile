@@ -11,7 +11,10 @@ OBJ_DIR  = obj
 BIN      = app.exe
 
 # Sources / objects
-SRC := $(wildcard $(SRC_DIR)/*.cpp)
+# Pick up .cpp in src/ and in one-level subdirs: src/core, src/view, etc.
+SRC := $(wildcard $(SRC_DIR)/*.cpp) $(wildcard $(SRC_DIR)/*/*.cpp)
+
+# Turn src/foo/bar.cpp into obj/foo/bar.o
 OBJ := $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 
 # Default target
@@ -21,16 +24,16 @@ all: $(BIN)
 $(BIN): $(OBJ)
 	$(CXX) $(OBJ) -o $@ $(LDFLAGS)
 
-# Compile step (ensure obj/ exists first)
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
+# Compile step
+# Ensure the target directory (e.g. obj/core/) exists before compiling
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+	@if not exist "$(dir $@)" mkdir "$(dir $@)"
 	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-# Create obj directory if it doesn't exist
-$(OBJ_DIR):
-	mkdir $(OBJ_DIR)
 
 # Clean up
 .PHONY: clean
 clean:
 	-del /Q $(OBJ_DIR)\*.o $(BIN) 2>nul || true
+	-rem Remove subdirectories inside obj
+	-for /d %%D in ($(OBJ_DIR)\*) do @rmdir /S /Q "%%D" 2>nul || true
 	-rmdir $(OBJ_DIR) 2>nul || true
