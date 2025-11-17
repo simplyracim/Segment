@@ -52,11 +52,13 @@ void View::handleMouseWheel(const sf::Event::MouseWheelScrolled& wheel)
         float oldScale = m_scale;
         float newScale = oldScale * factor;
 
+        /*
         // Clamp zoom
-        const float minScale = 10.f;
-        const float maxScale = 400.f;
+        const float minScale = 1.f;
+        const float maxScale = 4000.f;
         if (newScale < minScale) newScale = minScale;
         if (newScale > maxScale) newScale = maxScale;
+        */
 
         if (newScale == oldScale)
             return; // nothing to do (hit clamp)

@@ -2,6 +2,7 @@
 #define VIEW_H
 
 #include "Segment.h"
+
 #include <vector>
 #include <SFML/Graphics.hpp>
 
