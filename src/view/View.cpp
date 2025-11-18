@@ -5,13 +5,15 @@
 // ======= View core (ctor, helpers, main loop) =======
 
 View::View(const std::vector<Segment>& segments,
-           const std::vector<Point>* intersectionsOpt)
+           const std::vector<Point>* intersectionsOpt,
+           const std::vector<std::string>& logLines)
     : m_segments(segments)
     , m_intersections(intersectionsOpt)
     , m_window(sf::VideoMode({800u, 600u}), "Segment demo")
     , m_scale(80.f)
     , m_center(800.f / 2.f, 600.f / 2.f)
     , m_fontLoaded(false)
+    , m_logLines(logLines)
 {
     // Load font (adjust path to where your .ttf file is)
     m_fontLoaded = m_font.openFromFile("assets/consolas-regular.ttf");
@@ -49,6 +51,7 @@ void View::run()
         drawSegments();
         drawIntersections();
         drawAxisLabels();
+        drawConsole();
 
         m_window.display();
     }

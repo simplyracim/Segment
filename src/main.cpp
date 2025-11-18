@@ -1,5 +1,6 @@
 #include <vector>
-#include <iostream>
+#include <string>
+#include <sstream>
 
 #include "Point.h"
 #include "Vector.h"
@@ -9,25 +10,37 @@
 int main() {
     std::vector<Segment> segments;
 
-    // Create 10 segments (for example)
+    // Create 10 segments
     segments.emplace_back(Point(0.f,   0.f),  Vector(1.f,  2.f));   // S0
     segments.emplace_back(Point(2.f,   0.f),  Vector(1.f,  2.f));   // S1
     segments.emplace_back(Point(1.f,   1.f),  Vector(-1.f, 0.f));   // S2
-    segments.emplace_back(Point(-1.f, -1.f), Vector(0.f,  2.f));    // S3
-    segments.emplace_back(Point(-2.f,  2.f), Vector(4.f, -1.f));    // S4
-    segments.emplace_back(Point(3.f,  -1.f), Vector(-2.f, 3.f));    // S5
-    segments.emplace_back(Point(0.5f,  2.f), Vector(1.f, -3.f));    // S6
-    segments.emplace_back(Point(-3.f,  0.f), Vector(6.f,  0.f));    // S7
-    segments.emplace_back(Point(0.f,   3.f), Vector(0.f, -4.f));    // S8
-    segments.emplace_back(Point(1.f,  -2.f), Vector(2.f,  1.f));    // S9
+    segments.emplace_back(Point(-1.f, -1.f),  Vector(0.f,  2.f));   // S3
+    segments.emplace_back(Point(-2.f,  2.f),  Vector(4.f, -1.f));   // S4
+    segments.emplace_back(Point(3.f,  -1.f),  Vector(-2.f, 3.f));   // S5
+    segments.emplace_back(Point(0.5f,  2.f),  Vector(1.f, -3.f));   // S6
+    segments.emplace_back(Point(-3.f,  0.f),  Vector(6.f,  0.f));   // S7
+    segments.emplace_back(Point(0.f,   3.f),  Vector(0.f, -4.f));   // S8
+    segments.emplace_back(Point(1.f,  -2.f),  Vector(2.f,  1.f));   // S9
 
-    // Print them
-    std::cout << "==== All segments ====\n";
+    // Log lines to show in the SFML "console"
+    std::vector<std::string> logLines;
+
+    // ==== Segment info ====
+    logLines.push_back("==== All segments ====");
     for (std::size_t i = 0; i < segments.size(); ++i) {
-        std::cout << "Segment " << i << ":\n";
-        segments[i].print();
+        std::ostringstream oss;
+        oss << "Segment " << i << ": ";
+
+        // Very simple inline description instead of using print()
+        const Point&  p = segments[i].origin;
+        const Vector& v = segments[i].direction;
+
+        oss << "origin = {" << p.getX() << " , " << p.getY() << "}, "
+            << "dir = (" << v.getX() << ", " << v.getY() << ")";
+
+        logLines.push_back(oss.str());
     }
-    std::cout << "======================\n\n";
+    logLines.push_back("======================");
 
     // Compute intersections
     std::vector<Point> intersections;
@@ -39,22 +52,31 @@ int main() {
             IntersectionStatus status =
                 segments[i].intersect(segments[j], intersection);
 
-            std::cout << "Segments " << i << " and " << j
-                      << " -> " << Segment2_statusToString(status);
-
-            if (status == POINT) {
-                intersection.print();
-                intersections.push_back(intersection);
+            // One line for the status
+            {
+                std::ostringstream oss;
+                oss << "Segments " << i << " and " << j
+                    << " -> " << Segment2_statusToString(status);
+                logLines.push_back(oss.str());
             }
 
-            std::cout << "\n";
+            // Extra line if they intersect in a point
+            if (status == POINT) {
+                std::ostringstream ossPt;
+                ossPt << "  Intersection at {"
+                      << intersection.getX() << " , "
+                      << intersection.getY() << "}";
+                logLines.push_back(ossPt.str());
+
+                intersections.push_back(intersection);
+            }
         }
 
-        std::cout << "=============\n";
+        logLines.push_back("=============");
     }
 
-    // Launch the view
-    View view(segments, &intersections);
+    // Launch the view, passing the log lines too
+    View view(segments, &intersections, logLines);
     view.run();
 
     return 0;

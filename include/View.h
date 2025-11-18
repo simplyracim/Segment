@@ -12,36 +12,37 @@ class Point;
 class View {
 public:
     View(const std::vector<Segment>& segments,
-         const std::vector<Point>* intersectionsOpt = nullptr);
+         const std::vector<Point>* intersectionsOpt = nullptr,
+         const std::vector<std::string>& logLines = {});  // <-- new param
 
     void run();
 
 private:
-    // references to your data (not owned)
     const std::vector<Segment>& m_segments;
     const std::vector<Point>*   m_intersections;
 
-    // SFML state
     sf::RenderWindow m_window;
     float            m_scale;
     sf::Vector2f     m_center;
 
-    // one color per segment
-    std::vector<sf::Color> m_segColors;
+    std::vector<sf::Color>      m_segColors;
+    sf::Font                    m_font;
+    bool                        m_fontLoaded;
 
-    sf::Font m_font;
-    bool     m_fontLoaded;
+    // NEW: log content
+    std::vector<std::string>    m_logLines;
 
-    // helpers
     sf::Vector2f worldToScreen(sf::Vector2f v) const;
 
     void handleEvents();
     void handleResize(unsigned newWidth, unsigned newHeight);
     void handleMouseWheel(const sf::Event::MouseWheelScrolled& wheel);
+
     void drawAxes();
+    void drawAxisLabels();
     void drawSegments();
     void drawIntersections();
-    void drawAxisLabels();
+    void drawConsole();   // <--- new
 };
 
 #endif // VIEW_H

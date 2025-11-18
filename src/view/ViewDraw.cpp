@@ -300,3 +300,51 @@ void View::drawIntersections()
         m_window.draw(c);
     }
 }
+
+void View::drawConsole()
+{
+    if (!m_fontLoaded) return;
+    if (m_logLines.empty()) return;
+
+    sf::Vector2u size = m_window.getSize();
+
+    // Console area: bottom 1/3 of the window
+    float consoleHeight = size.y * 1.0f;
+    float consoleTop    = size.y - consoleHeight;
+    float padding       = 8.f;
+
+    // Background rectangle (slightly transparent)
+    sf::RectangleShape bg;
+    bg.setPosition({ 0.f, consoleTop });
+    bg.setSize({ static_cast<float>(size.x * 0.3f), consoleHeight });
+    bg.setFillColor(sf::Color(10, 10, 10, 220)); // dark translucent
+    bg.setOutlineColor(sf::Color(80, 80, 80));
+    bg.setOutlineThickness(1.f);
+
+    m_window.draw(bg);
+
+    // Text characteristics
+    const unsigned charSize = 14;
+    const float lineSpacing = static_cast<float>(charSize) + 4.f;
+
+    // How many lines fit
+    int maxVisibleLines = static_cast<int>((consoleHeight - 2 * padding) / lineSpacing);
+    if (maxVisibleLines <= 0) return;
+
+    // Start from the end (most recent lines)
+    int totalLines = static_cast<int>(m_logLines.size());
+    int startIndex = std::max(0, totalLines - maxVisibleLines);
+
+    float x = padding;
+    float y = consoleTop + padding;
+
+    for (int i = startIndex; i < totalLines; ++i) {
+        sf::Text text(m_font, m_logLines[i]);
+        text.setCharacterSize(charSize);
+        text.setFillColor(sf::Color(220, 220, 220));
+        text.setPosition({ x, y });
+
+        m_window.draw(text);
+        y += lineSpacing;
+    }
+}

@@ -3,7 +3,7 @@ CXX      = g++
 CXXFLAGS = -std=c++20 -I"C:/SFML-3.0.2/include" -I"include"
 
 # SFML libraries
-LDFLAGS  = -L"C:/SFML-3.0.2/lib" -lsfml-graphics -lsfml-window -lsfml-system
+LDFLAGS  = -L"C:/SFML-3.0.2/lib" -lsfml-graphics -lsfml-window -lsfml-system -mwindows
 
 # Directories
 SRC_DIR  = src

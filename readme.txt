@@ -5,19 +5,22 @@ This project was made as a learning exercise for C++, especially on the function
 
 Things to do :
 
-Graphics ============================================
+Graphics ============================================-
 
-(X) Gradations of the axioms
+Interface for adding, editing, removing segments
 
 Representation for operations (Scalar, dot, cross, negate)
 
-Later fuse the terminal to the graphics (one shared window)
+Make an integrated terminal in the SFML window
 
-Hide the Axes the farther you go
+Adaptive Label scale (like geogebra) (2^n, 2^n, 10^n)
 
-(X) Resizing
+Resizing
+--> Janky, creates artifacts when scaling but otherwise works 
 
-(X) Controls (zoom, pan ect)
+Controls :
+(X) Zoom/Pan
+(X) Mouse controls
 
 Logic ===============================================
 
