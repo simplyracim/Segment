@@ -37,7 +37,7 @@ static void drawSegment(sf::RenderWindow& window,
 
 static float computeGridStep(float scale)
 {
-    const float targetPixels = 150.f;
+    const float targetPixels = 500.f;
 
     // Approximate the desired spacing in world units
     float rawStep = targetPixels / scale;
@@ -45,10 +45,10 @@ static float computeGridStep(float scale)
     if (rawStep <= 0.f)
         return 1.f;
 
-    // Compute k such that step = 2^k is closest to rawStep
+    // Compute k such that step = 10^k is closest to rawStep
     float exponent = std::round(std::log2(rawStep));
 
-    // Return 2^k
+    // Return 10^k
     return std::pow(2.f, exponent);
 }
 
@@ -59,37 +59,39 @@ static std::string formatNumber(float value, float step)
         value = 0.f;
     }
 
-    // Decide how many decimals we need based on the step size
-    // Example:
-    //   step = 10   -> 0 decimals
-    //   step = 1    -> 0 decimals
-    //   step = 0.5  -> 1 decimal
-    //   step = 0.1  -> 1 decimal
-    //   step = 0.05 -> 2 decimals, etc.
+    // Decide decimals based on powers-of-two step
     int decimals = 0;
     float s = step;
 
-    // Cap at, say, 5 decimals so it never gets too crazy
-    while (s < 1.f && decimals < 5) {
-        s *= 10.f;
+    // Cap at 6 decimals so it doesn't go crazy
+    while (s < 1.f && decimals < 6) {
+        s *= 2.f;      // because your grid uses 2^k steps
         ++decimals;
     }
 
     // Round to that many decimals
-    float pow10 = std::pow(10.f, (float)decimals);
+    float pow10 = 1.f;
+    for (int i = 0; i < decimals; ++i) {
+        pow10 *= 10.f;
+    }
+
     float rounded = std::round(value * pow10) / pow10;
 
     std::ostringstream oss;
     oss << std::fixed << std::setprecision(decimals) << rounded;
     std::string str = oss.str();
 
-    // Strip trailing zeros and an optional trailing dot
-    // e.g. "1.5000" -> "1.5", "2.000" -> "2"
-    while (!str.empty() && str.back() == '0') {
-        str.pop_back();
-    }
-    if (!str.empty() && str.back() == '.') {
-        str.pop_back();
+    // Only strip trailing zeros in the fractional part
+    auto dotPos = str.find('.');
+    if (dotPos != std::string::npos) {
+        // strip zeros to the right of the dot
+        while (str.size() > dotPos + 1 && str.back() == '0') {
+            str.pop_back();
+        }
+        // if we end up with a trailing dot, remove it
+        if (!str.empty() && str.back() == '.') {
+            str.pop_back();
+        }
     }
 
     if (str.empty()) {
@@ -112,11 +114,12 @@ void View::drawAxes()
     float worldBottom = (m_center.y - size.y * 1.f) / m_scale;
 
     // Base grid spacing in world units
-    float baseStep = computeGridStep(m_scale);
-
-    // Fine step: smaller than base, for faint lines
+    float baseStep = computeGridStep(m_scale * 2);
     float fineStep = baseStep / 10.f;
     const float eps = 1e-6f;
+
+    const int baseEvery   = 10;
+    const int coarseEvery = 20;
 
     // We'll draw lines at x = n * fineStep
     int nXStart = static_cast<int>(std::floor(worldLeft  / fineStep));
@@ -129,9 +132,6 @@ void View::drawAxes()
     sf::Color colBase   (50, 50, 50);   // medium
     sf::Color colCoarse (70, 70, 70);   // strongest (still below axis)
     sf::Color axisColor (100, 100, 100);
-
-    const int baseEvery   = 10;          // baseStep = 5 * fineStep
-    const int coarseEvery = 20;         // coarse = 5 * base = 25 * fine
 
     // ---------- Vertical grid lines ----------
     for (int n = nXStart; n <= nXEnd; ++n) {
@@ -199,12 +199,9 @@ void View::drawAxisLabels()
     float worldBottom = (m_center.y - size.y * 1.f) / m_scale;
 
     // Same step logic as drawAxes()
-    float baseStep = computeGridStep(m_scale);
-    float fineStep = baseStep / 5.f;
+    float step = computeGridStep(m_scale);
+    float fineStep = step / 10;
     const float eps = 1e-6f;
-
-    const int baseEvery   = 2;  // same as in drawAxes
-    const int coarseEvery = 4;
 
     // Index ranges in fine-step space
     int nXStart = static_cast<int>(std::floor(worldLeft   / fineStep));
@@ -212,8 +209,8 @@ void View::drawAxisLabels()
     int nYStart = static_cast<int>(std::floor(worldBottom / fineStep));
     int nYEnd   = static_cast<int>(std::ceil (worldTop    / fineStep));
 
-    const float labelOffsetX = -0.2f;  // below X axis in world coords
-    const float labelOffsetY =  0.2f;  // right of Y axis
+    const float labelOffsetX = -0.2f / m_scale;  // below X axis in world coords
+    const float labelOffsetY =  0.2f / m_scale;  // right of Y axis
 
     // ---------- X-axis labels (for vertical lines) ----------
     for (int n = nXStart; n <= nXEnd; ++n) {
@@ -223,14 +220,7 @@ void View::drawAxisLabels()
         if (std::fabs(x) < eps)
             continue;
 
-        bool isBase   = (n % baseEvery   == 0);
-        bool isCoarse = (n % coarseEvery == 0);
-
-        // Only normal-colored lines: base but NOT coarse
-        if (!(isBase && !isCoarse))
-            continue;
-
-        sf::Text text(m_font, std::to_string(x));
+        sf::Text text(m_font, formatNumber(x, fineStep));
         text.setCharacterSize(14);
         text.setFillColor(sf::Color(180, 180, 180));
 
@@ -254,13 +244,7 @@ void View::drawAxisLabels()
         if (std::fabs(y) < eps)
             continue;
 
-        bool isBase   = (n % baseEvery   == 0);
-        bool isCoarse = (n % coarseEvery == 0);
-
-        if (!(isBase && !isCoarse))
-            continue;
-
-        sf::Text text(m_font, std::to_string(y));
+        sf::Text text(m_font, formatNumber(y, fineStep));
         text.setCharacterSize(14);
         text.setFillColor(sf::Color(180, 180, 180));
 
